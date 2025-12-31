@@ -5,6 +5,7 @@
 #include "leveldb/dumpfile.h"
 
 #include <cstdio>
+#include <filesystem>
 
 #include "db/dbformat.h"
 #include "db/filename.h"
@@ -24,15 +25,8 @@ namespace leveldb {
 namespace {
 
 bool GuessType(const std::string& fname, FileType* type) {
-  size_t pos = fname.rfind('/');
-  std::string basename;
-  if (pos == std::string::npos) {
-    basename = fname;
-  } else {
-    basename = std::string(fname.data() + pos + 1, fname.size() - pos - 1);
-  }
   uint64_t ignored;
-  return ParseFileName(basename, &ignored, type);
+  return ParseFileName(std::filesystem::path(fname).filename().string(), &ignored, type);
 }
 
 // Notified when log reader encounters corruption.
